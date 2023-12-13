@@ -1,0 +1,72 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+int main(){
+    FILE *f1,*f2,*f3,*f4,*f5;
+    int len,i,pos=1;
+    char label[20],mne[20],op[20],arg[20],macname[20],mne1[20],op1[20],str1[10],str2[10];
+    f1=fopen("input.txt","r");
+    f2=fopen("namtab.txt","w+");
+    f3=fopen("deftab.txt","w+");
+    f4=fopen("argtab.txt","w+");
+    f5=fopen("output.txt","w");
+    fscanf(f1,"%s\t%s\t%s",label,mne,op);
+    while(strcmp(mne,"END")!=0){
+        if(strcmp(mne,"MACRO")==0){
+            fprintf(f2,"%s\n",label);
+            fseek(f2,0,SEEK_SET);
+            fprintf(f3,"%s\t%s\n",label,op);
+            fscanf(f1,"%s\t%s\t%s",label,mne,op);
+            while(strcmp(mne,"MEND")!=0){
+                if(op[0]=='&'){
+                    sprintf(str1,"%d",pos);
+                    strcpy(str2,"?");
+                    strcpy(op,strcat(str2,str1));
+                    pos+=1;
+                }
+                fprintf(f3,"%s\t%s\n",mne,op);
+                fscanf(f1,"%s\t%s\t%s",label,mne,op);
+            }
+            fprintf(f3,"%s",mne);
+        }
+        else{
+            fscanf(f2,"%s",macname);
+            if(strcmp(macname,mne)==0){
+                len=strlen(op);
+                for(i=0;i<len;i++){
+                    if(op[i]!=','){
+                        fprintf(f4,"%c",op[i]);
+                    }
+                    else{
+                        fprintf(f4,"\n");
+                    }
+                }
+                fseek(f3,0,SEEK_SET);
+                fseek(f4,0,SEEK_SET);
+                fprintf(f5,"**\t%s\t%s\n",mne,op);
+                fscanf(f3,"%s%s",mne1,op1);
+                while(strcmp(mne1,"MEND")!=0){
+                    if(op1[0]=='?'){
+                        fscanf(f4,"%s",arg);
+                        fprintf(f5,"**\t%s\t%s\n",mne1,arg);
+                    }
+                    else if(op1[0]=='&'){
+                        fprintf(f5,"**\t%s\t%s\n",mne1,op1);
+                    }
+                    fscanf(f3,"%s%s",mne1,op1);
+                }
+            }
+            else{
+                fprintf(f5,"%s\t%s\t%s\n",label,mne,op);
+            }
+        }
+        fscanf(f1,"%s\t%s\t%s",label,mne,op);
+    }
+    fprintf(f5,"%s\t%s\t%s",label,mne,op);
+    fclose(f1);
+    fclose(f2);
+    fclose(f3);
+    fclose(f4);
+    fclose(f5);
+    return 0;
+}

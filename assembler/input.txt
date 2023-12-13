@@ -1,0 +1,10 @@
+**     START   1000
+**     LDA     ALPHA
+**     STA     BETA
+**     LDCH    CHAR
+**     STCH    CHARZ
+BETA   RESW    1
+ALPHA  WORD    5
+CHARZ  RESB    1
+CHAR   BYTE    C'HI'
+**     END     **

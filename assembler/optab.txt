@@ -1,0 +1,5 @@
+LDA    21
+STA    11
+LDCH   53
+STCH   25
+END
